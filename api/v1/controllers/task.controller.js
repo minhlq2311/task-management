@@ -2,6 +2,8 @@
 const Task = require('../models/task.model');
 const paginationHelper = require('../../../helpers/pagination.js');
 const searchHelper = require('../../../helpers/search.js');
+
+// [GET] /api/v1/tasks
 const index = async (req, res) => {
     try {
         const find = {
@@ -37,7 +39,7 @@ const index = async (req, res) => {
     }
 }
 
-// function to get task details by id
+// [GET] /api/v1/tasks/details/:id
 const details = async (req, res) => {
     const id = req.params.id;
     try {
@@ -51,7 +53,34 @@ const details = async (req, res) => {
     }  
 }
 
+// [PATCH] /api/v1/tasks/change-status/:id
+const changeStatus = async (req, res) => {
+    const id = req.params.id;
+    const status = req.body.status;
+
+    const validStatuses = ['initial', 'doing', 'pending', 'finish'];
+    try {
+        const task = await Task.findById(id);
+        if (!task || task.deleted) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+        task.status = status;
+        await task.save();
+        res.json({
+            code: 200,
+            message: 'Task status updated successfully',
+            task: task
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error changing task status' });
+    }
+};
+
 module.exports = {
     index,
-    details
+    details,
+    changeStatus
 };
