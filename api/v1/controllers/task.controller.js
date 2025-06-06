@@ -7,9 +7,13 @@ const searchHelper = require('../../../helpers/search.js');
 const index = async (req, res) => {
     try {
         const find = {
+            $or: [
+                {createdBy: req.user._id},
+                {listUsers: req.user._id}
+            ],
             deleted: false
-        }
-        // Filter status 
+        };
+        // Filter status
         if (req.query.status) {
             find.status = req.query.status;
         }
