@@ -79,8 +79,47 @@ const changeStatus = async (req, res) => {
     }
 };
 
+// [PATCH] /api/v1/tasks/change-multi
+const changeMulti = async (req, res) => {
+    const {ids, key, value} = req.body;
+    switch (key) {
+        case 'status':
+            const validStatuses = ['initial', 'doing', 'pending', 'finish'];
+            if (!validStatuses.includes(value)) {
+                return res.status(400).json({ message: 'Invalid status' });
+            }
+            await Task.updateMany(
+                { _id: { $in: ids }, deleted: false },
+                { $set: { status: value } }
+            );
+            return res.json({
+                code: 200,
+                message: 'Tasks status updated successfully',
+            });
+            break;
+        default:
+            return res.status(400).json({ message: 'Invalid key' });
+    }
+};
+
+// [POST] /api/v1/tasks/create
+const create = async (req, res) => {
+    const task = new Task(req.body);
+    try {
+        await task.save();
+        res.status(201).json({
+            code: 201,
+            message: 'Task created successfully',
+            task: task
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating task' });
+    }
+};
 module.exports = {
     index,
     details,
-    changeStatus
+    changeStatus,
+    changeMulti,
+    create
 };
