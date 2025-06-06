@@ -5,6 +5,7 @@ const controller = require('../controllers/user.controller');
 
 
 router.post('/register', validate.registerPost, controller.register);
+router.post('/login', validate.loginPost, controller.login);
 // router.post('/register', validate.registerPost, controller.registerPost);
 // router.post('/login', validate.loginPost, controller.loginPost);
 // router.post('/forgot-password', validate.forgotPasswordPost, controller.forgotPasswordPost);
