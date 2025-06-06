@@ -134,11 +134,33 @@ const update = async (req, res) => {
     }
 };
 
+
+// [DELETE] /api/v1/tasks/delete/:id
+const deleteTask = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const task = await Task.findById(id);
+        if (!task || task.deleted) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        task.deleted = true;
+        task.deletedAt = new Date();
+        await task.save();
+        res.json({
+            code: 200,
+            message: 'Task deleted successfully',
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting task' });
+    }
+};
+
 module.exports = {
     index,
     details,
     changeStatus,
     changeMulti,
     create,
-    update
+    update,
+    deleteTask
 };

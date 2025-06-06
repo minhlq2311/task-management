@@ -10,5 +10,7 @@ router.patch('/change-status/:id', controller.changeStatus);
 router.patch('/change-multi', controller.changeMulti);
 router.post('/create', validate.createPost, controller.create);
 router.patch('/update/:id', validate.updatePost, controller.update);
+router.delete('/delete/:id', controller.deleteTask);
+
 
 module.exports = router;
