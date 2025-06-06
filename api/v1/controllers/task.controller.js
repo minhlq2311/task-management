@@ -10,7 +10,7 @@ const index = async (req, res) => {
             deleted: false
         }
         // Filter status 
-        if(req.query.status){
+        if (req.query.status) {
             find.status = req.query.status;
         }
 
@@ -23,12 +23,12 @@ const index = async (req, res) => {
 
         // Search
         const objectSearch = searchHelper(req.query);
-        if(objectSearch.regex){
+        if (objectSearch.regex) {
             find.title = objectSearch.regex;
         }
         // Sort
         const sort = {};
-        if(req.query.sortKey && req.query.sortValue){
+        if (req.query.sortKey && req.query.sortValue) {
             sort[req.query.sortKey] = req.query.sortValue
         }
         const tasks = await Task.find(find).sort(sort).skip(objectPagination.skip).limit(objectPagination.limitItems);
@@ -50,7 +50,7 @@ const details = async (req, res) => {
         res.json(task);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching task details' });
-    }  
+    }
 }
 
 // [PATCH] /api/v1/tasks/change-status/:id
@@ -81,7 +81,7 @@ const changeStatus = async (req, res) => {
 
 // [PATCH] /api/v1/tasks/change-multi
 const changeMulti = async (req, res) => {
-    const {ids, key, value} = req.body;
+    const { ids, key, value } = req.body;
     switch (key) {
         case 'status':
             const validStatuses = ['initial', 'doing', 'pending', 'finish'];
@@ -114,8 +114,9 @@ const changeMulti = async (req, res) => {
 
 // [POST] /api/v1/tasks/create
 const create = async (req, res) => {
-    const task = new Task(req.body);
     try {
+        const task = new Task(req.body);
+        task.createdBy = req.user._id; // Attach the user ID to the task
         await task.save();
         res.status(201).json({
             code: 201,
