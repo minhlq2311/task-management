@@ -9,4 +9,6 @@ router.get('/details/:id', controller.details);
 router.patch('/change-status/:id', controller.changeStatus);
 router.patch('/change-multi', controller.changeMulti);
 router.post('/create', validate.createPost, controller.create);
+router.patch('/update/:id', validate.updatePost, controller.update);
+
 module.exports = router;

@@ -116,10 +116,29 @@ const create = async (req, res) => {
         res.status(500).json({ message: 'Error creating task' });
     }
 };
+
+// [PATCH] /api/v1/tasks/update/:id
+const update = async (req, res) => {
+    const id = req.params.id;
+    try {
+        await Task.updateOne(
+            { _id: id, deleted: false },
+            { $set: req.body }
+        );
+        res.json({
+            code: 200,
+            message: 'Task updated successfully',
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating task' });
+    }
+};
+
 module.exports = {
     index,
     details,
     changeStatus,
     changeMulti,
-    create
+    create,
+    update
 };
