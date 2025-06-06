@@ -98,9 +98,32 @@ const forgotPassword = async (req, res) => {
     }
 };
 
+const otpPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const otp = req.body.otp;
+
+        // Find OTP in database
+        const forgotPassword = await ForgotPassword.findOne({ email: email, otp: otp});
+        if (!forgotPassword) {
+            return res.status(404).json({ message: 'Invalid OTP' });
+        }
+
+        const user = await User.findOne({ email: email, deleted: false });
+        res.cookie('token', user.tokenUser, {
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            httpOnly: true,
+        });
+
+        res.status(200).json({ message: 'OTP verified successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Error verifying OTP' });
+    }
+};
 
 module.exports = {
     register,
     login,
-    forgotPassword
+    forgotPassword,
+    otpPassword
 };
