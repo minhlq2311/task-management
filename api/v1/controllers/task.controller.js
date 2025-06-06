@@ -97,6 +97,16 @@ const changeMulti = async (req, res) => {
                 message: 'Tasks status updated successfully',
             });
             break;
+
+        case 'deleted':
+            await Task.updateMany(
+                { _id: { $in: ids }, deleted: false },
+                { $set: { deleted: true, deletedAt: new Date() } }
+            );
+            return res.json({
+                code: 200,
+                message: 'Tasks deleted successfully',
+            });
         default:
             return res.status(400).json({ message: 'Invalid key' });
     }
