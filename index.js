@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 require('dotenv').config();
 // Kết nối với CSDL MongoDB sử dụng MongoDBCompass
 const database = require('./config/database');
@@ -13,7 +14,7 @@ const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(cors());
 routesVer1(app);
 
 app.listen(PORT, () => {
