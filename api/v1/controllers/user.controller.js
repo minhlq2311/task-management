@@ -2,6 +2,10 @@
 const User = require('../models/user.model');
 const generate = require('../../../helpers/generate.js');
 const md5 = require('md5');
+const sendMailHelper = require('../../../helpers/sendMail.js');
+
+const ForgotPassword = require('../models/forgot-password.model');
+
 const register = async (req, res) => {
     try{
         // Check if user already exists
@@ -61,7 +65,42 @@ const login = async (req, res) => {
     }
 };
 
+
+const forgotPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const user = await User.findOne({ email: email, deleted: false });
+        if (!user) {
+            return res.status(404).json({ message: 'Invalid email' });
+        }
+
+        // Generate OTP
+        const otp = generate.generateRandomNumber(6);
+        const timeExpired = 5; // 5 minutes
+        
+        const objectForgotPassword = {
+            email: email,
+            otp: otp,
+            expireAt: Date.now() + timeExpired * 60 * 1000, // 5 minutes from now
+        };
+        // Save OTP to database
+        const forgotPassword = new ForgotPassword(objectForgotPassword);
+        await forgotPassword.save();
+
+        // Send OTP to email
+        const subject = 'Password Reset OTP';
+        const html = `<p>Your OTP is: <strong>${otp} expires in ${timeExpired} minutes</strong></p>`;
+        sendMailHelper.sendMail(email, subject, html);
+
+        res.status(200).json({ message: 'OTP sent to email' , otp:otp});
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending OTP' });
+    }
+};
+
+
 module.exports = {
     register,
-    login
+    login,
+    forgotPassword
 };
