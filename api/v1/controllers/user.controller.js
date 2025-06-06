@@ -150,11 +150,21 @@ const userDetail = async (req, res) => {
         user: req.user
     });
 };
+
+const list = async (req, res) => {
+    try {
+        const users = await User.find({ deleted: false }).select("fullname email");
+        res.status(200).json({ message: 'User list retrieved successfully', users });
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving user list' });
+    }
+};
 module.exports = {
     register,
     login,
     forgotPassword,
     otpPassword,
     resetPasswordPost,
-    userDetail
+    userDetail,
+    list
 };
