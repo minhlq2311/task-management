@@ -143,10 +143,18 @@ const resetPasswordPost = async (req, res) => {
     }
 };
 
+
+const userDetail = async (req, res) => {
+    res.status(200).json({
+        message: 'User details retrieved successfully',
+        user: req.user
+    });
+};
 module.exports = {
     register,
     login,
     forgotPassword,
     otpPassword,
-    resetPasswordPost
+    resetPasswordPost,
+    userDetail
 };
