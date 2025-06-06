@@ -39,13 +39,5 @@ module.exports.resetPasswordPost = (req, res, next) => {
     res.json({ message: "Vui lòng nhập mật khẩu!" });
     return;
   }
-  if(!req.body.confirmPassword) {
-    res.json({ message: "Vui lòng xác nhận mật khẩu!" });
-    return;
-  }
-  if(req.body.password !== req.body.confirmPassword) {
-    res.json({ message: "Mật khẩu xác nhận không khớp!" });
-    return;
-  }
   next();
 }

@@ -121,9 +121,32 @@ const otpPassword = async (req, res) => {
     }
 };
 
+const resetPasswordPost = async (req, res) => {
+    try {
+        const token = req.body.token;
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const password = md5(req.body.password);
+        const user = await User.findOneAndUpdate({tokenUser:token});
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if(password === user.password) {
+            return res.status(400).json({ message: 'New password cannot be the same as the old password' });
+        }
+        user.password = password;
+        await user.save();
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error resetting password' });
+    }
+};
+
 module.exports = {
     register,
     login,
     forgotPassword,
-    otpPassword
+    otpPassword,
+    resetPasswordPost
 };
